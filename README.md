@@ -2,6 +2,10 @@
 
 A C++ implementation of motion planning algorithms with SFML visualization.
 
+<p align="center">
+  <img src="assets/astar.gif" alt="A* pathfinding visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
@@ -38,7 +42,7 @@ MotionPlanning/
 
 - CMake 3.16+
 - C++17 compiler
-- SFML 2.5+
+- SFML 3.0+
 
 ## Installing SFML
 
