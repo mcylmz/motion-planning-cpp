@@ -2,6 +2,7 @@
 
 A C++ implementation of motion planning algorithms with SFML visualization.
 
+### A* Search
 <p align="center">
   <img src="assets/astar.gif" alt="A* pathfinding visualization" width="500">
 </p>
