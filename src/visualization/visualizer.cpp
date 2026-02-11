@@ -51,6 +51,17 @@ std::optional<sf::Event> Visualizer::pollEvent() {
     return window_.pollEvent();
 }
 
+void Visualizer::setWorldBounds(double worldWidth, double worldHeight) {
+    double scaleX = static_cast<double>(config_.windowWidth) / worldWidth;
+    double scaleY = static_cast<double>(config_.windowHeight) / worldHeight;
+    scale_ = std::min(scaleX, scaleY) * 0.95;
+
+    double scaledWidth = worldWidth * scale_;
+    double scaledHeight = worldHeight * scale_;
+    offset_.x = (config_.windowWidth - scaledWidth) / 2.0;
+    offset_.y = (config_.windowHeight - scaledHeight) / 2.0;
+}
+
 void Visualizer::setGrid(Grid* grid) {
     grid_ = grid;
     if (grid_) {

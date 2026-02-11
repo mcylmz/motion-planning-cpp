@@ -32,6 +32,9 @@ public:
     void display();
     std::optional<sf::Event> pollEvent();
 
+    // World bounds (for continuous space algorithms like RRT)
+    void setWorldBounds(double worldWidth, double worldHeight);
+
     // Grid visualization
     void setGrid(Grid* grid);
     void drawGrid();

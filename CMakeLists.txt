@@ -38,6 +38,9 @@ target_link_libraries(motion_planning
 add_executable(example_grid examples/grid_search.cpp)
 target_link_libraries(example_grid motion_planning_core motion_planning_algorithms motion_planning_viz)
 
+add_executable(example_rrt examples/rrt_demo.cpp)
+target_link_libraries(example_rrt motion_planning_core motion_planning_algorithms motion_planning_viz)
+
 # Copy assets if they exist
 if(EXISTS "${PROJECT_SOURCE_DIR}/assets")
     file(COPY ${PROJECT_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
