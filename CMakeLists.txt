@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(MotionPlanning VERSION 1.0.0 LANGUAGES CXX)
 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -43,6 +47,9 @@ target_link_libraries(example_rrt motion_planning_core motion_planning_algorithm
 
 add_executable(example_rrt_star examples/rrt_star_demo.cpp)
 target_link_libraries(example_rrt_star motion_planning_core motion_planning_algorithms motion_planning_viz)
+
+add_executable(example_rrt_connect examples/rrt_connect_demo.cpp)
+target_link_libraries(example_rrt_connect motion_planning_core motion_planning_algorithms motion_planning_viz)
 
 # Copy assets if they exist
 if(EXISTS "${PROJECT_SOURCE_DIR}/assets")
