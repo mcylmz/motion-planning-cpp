@@ -7,6 +7,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/astar.gif" alt="A* pathfinding visualization" width="500">
 </p>
 
+### RRT (Rapidly-exploring Random Tree)
+<p align="center">
+  <img src="assets/rrt_animation.gif" alt="RRT visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
