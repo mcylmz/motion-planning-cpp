@@ -14,29 +14,35 @@ MotionPlanning/
 ├── CMakeLists.txt
 ├── include/
 │   ├── core/
-│   │   ├── types.hpp          # Basic types (Vec2, Cell, AABB, etc.)
-│   │   └── grid.hpp           # Grid world representation
+│   │   ├── types.hpp              # Basic types (Vec2, Cell, AABB, etc.)
+│   │   ├── grid.hpp               # Grid world representation
+│   │   └── environment.hpp        # Continuous 2D space with geometric obstacles
 │   ├── algorithms/
-│   │   ├── search_algorithm.hpp  # Base class for search algorithms
-│   │   ├── bfs.hpp            # Breadth-First Search
-│   │   ├── dijkstra.hpp       # Dijkstra's algorithm
-│   │   └── astar.hpp          # A* with heuristics
+│   │   ├── search_algorithm.hpp   # Base class for grid search algorithms
+│   │   ├── bfs.hpp                # Breadth-First Search
+│   │   ├── dijkstra.hpp           # Dijkstra's algorithm
+│   │   ├── astar.hpp              # A* with heuristics
+│   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
+│   │   └── rrt.hpp                # Rapidly-exploring Random Tree
 │   └── visualization/
-│       ├── colors.hpp         # Color definitions
-│       └── visualizer.hpp     # SFML visualization
+│       ├── colors.hpp             # Color definitions
+│       └── visualizer.hpp         # SFML visualization
 ├── src/
 │   ├── core/
-│   │   └── grid.cpp
+│   │   ├── grid.cpp
+│   │   └── environment.cpp
 │   ├── algorithms/
 │   │   ├── search_algorithm.cpp
 │   │   ├── bfs.cpp
 │   │   ├── dijkstra.cpp
-│   │   └── astar.cpp
+│   │   ├── astar.cpp
+│   │   └── rrt.cpp
 │   ├── visualization/
 │   │   └── visualizer.cpp
 │   └── main.cpp
 └── examples/
-    └── grid_search.cpp
+    ├── grid_search.cpp
+    └── rrt_demo.cpp
 ```
 
 ## Requirements
@@ -79,11 +85,14 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ## Running
 
 ```bash
-./motion_planning      # Interactive visualizer
-./example_grid         # Grid search comparison
+./motion_planning      # Interactive grid search visualizer
+./example_grid         # Grid search algorithm comparison
+./example_rrt          # RRT demo with continuous space
 ```
 
-## Controls (Interactive Visualizer)
+## Controls
+
+### Grid Search (`motion_planning` / `example_grid`)
 
 | Key | Action |
 |-----|--------|
@@ -100,16 +109,36 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 | C | Clear all |
 | Esc | Quit |
 
+### RRT (`example_rrt`)
+
+| Key | Action |
+|-----|--------|
+| Left Click | Place obstacle / Set start/goal (depends on mode) |
+| Right Click | Remove obstacle under cursor |
+| S | Set Start mode |
+| G | Set Goal mode |
+| D | Draw Rectangle mode |
+| O | Draw Circle mode |
+| N | Normal mode (no drawing) |
+| +/- | Adjust obstacle size (in draw mode) or step size |
+| Space | Run RRT |
+| R | Reset tree (keep obstacles) |
+| C | Clear all obstacles |
+| Esc | Quit |
+
 ## Implemented Algorithms
 
-### Phase 1: Graph-Based Search (Current)
+### Graph-Based Search (Discrete Grid)
 - [x] BFS (Breadth-First Search)
 - [x] Dijkstra's Algorithm
-- [x] A* with multiple heuristics
+- [x] A* with multiple heuristics (Manhattan, Euclidean, Chebyshev, Octile)
 
-### Phase 2: Coming Soon
-- [ ] Theta* (any-angle planning)
-- [ ] D* Lite (dynamic replanning)
-- [ ] RRT (Rapidly-exploring Random Tree)
-- [ ] RRT*
+### Sampling-Based Planning (Continuous Space)
+- [x] RRT (Rapidly-exploring Random Tree)
+
+### Coming Soon
+- [ ] RRT* (Optimal RRT with rewiring)
+- [ ] RRT-Connect (Bidirectional RRT)
 - [ ] PRM (Probabilistic Roadmap)
+- [ ] Theta* (Any-angle planning)
+- [ ] D* Lite (Dynamic replanning)
