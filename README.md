@@ -17,6 +17,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/rrt_star_animation.gif" alt="RRT* visualization" width="500">
 </p>
 
+### RRT-Connect (Bidirectional RRT)
+<p align="center">
+  <img src="assets/rrt_connect_animation.gif" alt="RRT-Connect visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
@@ -34,7 +39,8 @@ MotionPlanning/
 │   │   ├── astar.hpp              # A* with heuristics
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
 │   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
-│   │   └── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
+│   │   ├── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
+│   │   └── rrt_connect.hpp        # RRT-Connect (Bidirectional RRT)
 │   └── visualization/
 │       ├── colors.hpp             # Color definitions
 │       └── visualizer.hpp         # SFML visualization
@@ -48,14 +54,16 @@ MotionPlanning/
 │   │   ├── dijkstra.cpp
 │   │   ├── astar.cpp
 │   │   ├── rrt.cpp
-│   │   └── rrt_star.cpp
+│   │   ├── rrt_star.cpp
+│   │   └── rrt_connect.cpp
 │   ├── visualization/
 │   │   └── visualizer.cpp
 │   └── main.cpp
 └── examples/
     ├── grid_search.cpp
     ├── rrt_demo.cpp
-    └── rrt_star_demo.cpp
+    ├── rrt_star_demo.cpp
+    └── rrt_connect_demo.cpp
 ```
 
 ## Requirements
@@ -102,6 +110,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./example_grid         # Grid search algorithm comparison
 ./example_rrt          # RRT demo with continuous space
 ./example_rrt_star     # RRT* demo with path optimization
+./example_rrt_connect  # RRT-Connect demo with bidirectional trees
 ```
 
 ## Controls
@@ -149,6 +158,10 @@ Same controls as RRT, plus:
 | T | Toggle continue-after-goal mode |
 | Space | Run RRT* |
 
+### RRT-Connect (`example_rrt_connect`)
+
+Same controls as RRT.
+
 ## Implemented Algorithms
 
 ### Graph-Based Search (Discrete Grid)
@@ -159,9 +172,9 @@ Same controls as RRT, plus:
 ### Sampling-Based Planning (Continuous Space)
 - [x] RRT (Rapidly-exploring Random Tree)
 - [x] RRT* (Optimal RRT with rewiring)
+- [x] RRT-Connect (Bidirectional RRT)
 
 ### Coming Soon
-- [ ] RRT-Connect (Bidirectional RRT)
 - [ ] PRM (Probabilistic Roadmap)
 - [ ] Theta* (Any-angle planning)
 - [ ] D* Lite (Dynamic replanning)
