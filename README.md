@@ -22,6 +22,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/rrt_connect_animation.gif" alt="RRT-Connect visualization" width="500">
 </p>
 
+### PRM (Probabilistic Roadmap)
+<p align="center">
+  <img src="assets/prm_animation.gif" alt="PRM visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
@@ -40,7 +45,8 @@ MotionPlanning/
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
 │   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
 │   │   ├── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
-│   │   └── rrt_connect.hpp        # RRT-Connect (Bidirectional RRT)
+│   │   ├── rrt_connect.hpp        # RRT-Connect (Bidirectional RRT)
+│   │   └── prm.hpp                # PRM (Probabilistic Roadmap)
 │   └── visualization/
 │       ├── colors.hpp             # Color definitions
 │       └── visualizer.hpp         # SFML visualization
@@ -55,7 +61,8 @@ MotionPlanning/
 │   │   ├── astar.cpp
 │   │   ├── rrt.cpp
 │   │   ├── rrt_star.cpp
-│   │   └── rrt_connect.cpp
+│   │   ├── rrt_connect.cpp
+│   │   └── prm.cpp
 │   ├── visualization/
 │   │   └── visualizer.cpp
 │   └── main.cpp
@@ -63,7 +70,8 @@ MotionPlanning/
     ├── grid_search.cpp
     ├── rrt_demo.cpp
     ├── rrt_star_demo.cpp
-    └── rrt_connect_demo.cpp
+    ├── rrt_connect_demo.cpp
+    └── prm_demo.cpp
 ```
 
 ## Requirements
@@ -111,6 +119,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./example_rrt          # RRT demo with continuous space
 ./example_rrt_star     # RRT* demo with path optimization
 ./example_rrt_connect  # RRT-Connect demo with bidirectional trees
+./example_prm          # PRM demo with probabilistic roadmap
 ```
 
 ## Controls
@@ -162,6 +171,17 @@ Same controls as RRT, plus:
 
 Same controls as RRT.
 
+### PRM (`example_prm`)
+
+Same controls as RRT, plus:
+
+| Key | Action |
+|-----|--------|
+| K | Decrease k (neighbor count) |
+| L | Increase k (neighbor count) |
+| +/- | Adjust sample count (in normal mode) |
+| Space | Build roadmap and find path |
+
 ## Implemented Algorithms
 
 ### Graph-Based Search (Discrete Grid)
@@ -173,8 +193,8 @@ Same controls as RRT.
 - [x] RRT (Rapidly-exploring Random Tree)
 - [x] RRT* (Optimal RRT with rewiring)
 - [x] RRT-Connect (Bidirectional RRT)
+- [x] PRM (Probabilistic Roadmap)
 
 ### Coming Soon
-- [ ] PRM (Probabilistic Roadmap)
 - [ ] Theta* (Any-angle planning)
 - [ ] D* Lite (Dynamic replanning)
