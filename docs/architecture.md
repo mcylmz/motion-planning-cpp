@@ -10,17 +10,18 @@ The project follows a layered architecture with four distinct layers: Applicatio
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              APPLICATION LAYER                                  │
 │                                                                                 │
-│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐  │
-│  │     main.cpp         │  │  grid_search.cpp      │  │    rrt_demo.cpp      │  │
-│  │  (Grid Search GUI)   │  │  (Algorithm Bench)    │  │  (RRT GUI)           │  │
-│  │                      │  │                       │  │                      │  │
-│  │  • Mode switching    │  │  • Run all algos      │  │  • Mode switching    │  │
-│  │  • Obstacle drawing  │  │  • Compare stats      │  │  • Obstacle drawing  │  │
-│  │  • Algo selection    │  │  • Print table         │  │  • Tree animation   │  │
-│  └──────────┬───────────┘  └───────────┬───────────┘  └──────────┬───────────┘  │
-└─────────────┼──────────────────────────┼──────────────────────────┼──────────────┘
-              │                          │                          │
-              ▼                          ▼                          ▼
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐  │
+│  │   main.cpp      │  │ grid_search.cpp│  │ rrt_demo.cpp   │  │rrt_star_demo.cpp│  │
+│  │ (Grid Search)   │  │ (Algo Bench)   │  │ (RRT GUI)      │  │ (RRT* GUI)      │  │
+│  │                 │  │                │  │                │  │                 │  │
+│  │ • Mode switch   │  │ • Run all algos│  │ • Mode switch  │  │ • Mode switch   │  │
+│  │ • Obstacle draw │  │ • Compare stats│  │ • Obstacle draw│  │ • Obstacle draw │  │
+│  │ • Algo select   │  │ • Print table  │  │ • Tree animate │  │ • Tree animate  │  │
+│  └───────┬─────────┘  └───────┬────────┘  └───────┬────────┘  │ • Toggle cont.  │  │
+│          │                    │                    │           └────────┬────────┘  │
+└──────────┼────────────────────┼────────────────────┼───────────────────┼───────────┘
+           │                    │                    │                   │
+           ▼                    ▼                    ▼                   ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                             ALGORITHM LAYER                                     │
 │                                                                                 │
@@ -36,23 +37,23 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │   │  │  reconstructPath()          │  │   │  │  getStats()                │  │  │
 │   │  └──────────┬──────────────────┘  │   │  └──────────┬─────────────────┘  │  │
 │   │             │                     │   │             │                    │  │
-│   │    ┌────────┼────────┐            │   │             │                    │  │
-│   │    ▼        ▼        ▼            │   │             ▼                    │  │
-│   │ ┌──────┐┌───────┐┌──────┐        │   │       ┌──────────┐               │  │
-│   │ │ BFS  ││Dijkst-││  A*  │        │   │       │   RRT    │               │  │
-│   │ │      ││ ra    ││      │        │   │       │          │               │  │
-│   │ │queue ││pqueue ││pqueue│        │   │       │• sample  │               │  │
-│   │ │      ││g-cost ││f=g+h │        │   │       │• nearest │               │  │
-│   │ └──────┘└───────┘└──────┘        │   │       │• steer   │               │  │
-│   │                       │          │   │       │• extend  │               │  │
-│   │              ┌────────┘          │   │       └──────────┘               │  │
-│   │              ▼                   │   │                                   │  │
-│   │    ┌──────────────────┐          │   │    ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐    │  │
-│   │    │    Heuristics    │          │   │      Coming Soon:                 │  │
-│   │    │  • manhattan     │          │   │    │ • RRT*                  │    │  │
-│   │    │  • euclidean     │          │   │      • RRT-Connect                │  │
-│   │    │  • chebyshev     │          │   │    │ • PRM                   │    │  │
-│   │    │  • octile        │          │   │     ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─     │  │
+│   │    ┌────────┼────────┐            │   │        ┌────┴────┐               │  │
+│   │    ▼        ▼        ▼            │   │        ▼         ▼               │  │
+│   │ ┌──────┐┌───────┐┌──────┐        │   │  ┌──────────┐┌──────────┐        │  │
+│   │ │ BFS  ││Dijkst-││  A*  │        │   │  │   RRT    ││  RRT*    │        │  │
+│   │ │      ││ ra    ││      │        │   │  │          ││          │        │  │
+│   │ │queue ││pqueue ││pqueue│        │   │  │• sample  ││• sample  │        │  │
+│   │ │      ││g-cost ││f=g+h │        │   │  │• nearest ││• nearest │        │  │
+│   │ └──────┘└───────┘└──────┘        │   │  │• steer   ││• steer   │        │  │
+│   │                       │          │   │  │• extend  ││• choosePa│        │  │
+│   │              ┌────────┘          │   │  │          ││• rewire  │        │  │
+│   │              ▼                   │   │  │          ││• propagat│        │  │
+│   │    ┌──────────────────┐          │   │  └──────────┘└──────────┘        │  │
+│   │    │    Heuristics    │          │   │                                  │  │
+│   │    │  • manhattan     │          │   │                                  │  │
+│   │    │  • euclidean     │          │   │                                  │  │
+│   │    │  • chebyshev     │          │   │                                  │  │
+│   │    │  • octile        │          │   │                                  │  │
 │   │    └──────────────────┘          │   │                                  │  │
 │   └───────────────────────────────────┘   └──────────────────────────────────┘  │
 └───────────────────────────────┬──────────────────────────┬──────────────────────┘
@@ -212,6 +213,65 @@ User presses SPACE
               │ Path         │
               │ • points[]   │
               │ • totalLength│
+              │ • found      │
+              └──────────────┘
+```
+
+### RRT* (Optimal Sampling-Based)
+
+```
+User presses SPACE
+      │
+      ▼
+┌────────────────────┐
+│ keyCallback        │
+│ sets seed          │
+│ clears prev tree   │
+└────────┬───────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────────┐
+│ rrtStar.plan(env, start, goal, vizCallback)            │
+│                                                        │
+│  tree = {start}, cost[start] = 0                       │
+│                                                        │
+│  for (i = 0; i < maxIterations; i++) {                 │
+│      sample = (random < goalBias)                      │
+│               ? goal : env.sampleRandom()              │
+│                                                        │
+│      nearest = tree.nearestNode(sample)                │
+│      newPoint = steer(nearest, sample, stepSize)       │
+│                                                        │
+│      if (!collision-free) continue                     │
+│                                                        │
+│      ┌─── CHOOSE PARENT (new vs RRT) ───────────────┐ │
+│      │ nearNodes = findWithinRadius(newPoint, r)     │ │
+│      │ bestParent = argmin(cost[n] + dist(n, new))   │ │
+│      │             for n in nearNodes, collision-free │ │
+│      └───────────────────────────────────────────────┘ │
+│                                                        │
+│      tree.add(newPoint, parent=bestParent)             │
+│      cost[new] = cost[bestParent] + dist(bestP, new)  │
+│                                                        │
+│      ┌─── REWIRE (new vs RRT) ──────────────────────┐ │
+│      │ for each n in nearNodes:                      │ │
+│      │   if cost[new] + dist(new, n) < cost[n]:     │ │
+│      │     rewire n's parent → newPoint              │ │
+│      │     propagate cost update to descendants      │ │
+│      └───────────────────────────────────────────────┘ │
+│                                                        │
+│      if (newPoint near goal && improves bestCost)      │
+│          update best goal connection                   │
+│          if (continueAfterGoal) keep iterating ──────┐ │
+│          else break                                  │ │
+│  }                                ◀──────────────────┘ │
+└────────────────────┬───────────────────────────────────┘
+                     │
+                     ▼
+              ┌──────────────┐
+              │ Path         │
+              │ • points[]   │  Converges toward optimal
+              │ • totalLength│  as iterations increase
               │ • found      │
               └──────────────┘
 ```

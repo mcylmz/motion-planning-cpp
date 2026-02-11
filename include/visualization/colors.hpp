@@ -27,6 +27,7 @@ const sf::Color PATH_LINE   = sf::Color(156, 39, 176);      // Purple
 // Sampling-based algorithm colors
 const sf::Color SAMPLE      = sf::Color(255, 152, 0);       // Orange
 const sf::Color RRT_NEW     = sf::Color(76, 175, 80);       // Green
+const sf::Color REWIRE      = sf::Color(255, 193, 7);       // Amber
 
 }  // namespace colors
 }  // namespace motion_planning

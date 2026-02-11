@@ -12,6 +12,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/rrt_animation.gif" alt="RRT visualization" width="500">
 </p>
 
+### RRT* (Optimal RRT)
+<p align="center">
+  <img src="assets/rrt_star_animation.gif" alt="RRT* visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
@@ -28,7 +33,8 @@ MotionPlanning/
 │   │   ├── dijkstra.hpp           # Dijkstra's algorithm
 │   │   ├── astar.hpp              # A* with heuristics
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
-│   │   └── rrt.hpp                # Rapidly-exploring Random Tree
+│   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
+│   │   └── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
 │   └── visualization/
 │       ├── colors.hpp             # Color definitions
 │       └── visualizer.hpp         # SFML visualization
@@ -41,13 +47,15 @@ MotionPlanning/
 │   │   ├── bfs.cpp
 │   │   ├── dijkstra.cpp
 │   │   ├── astar.cpp
-│   │   └── rrt.cpp
+│   │   ├── rrt.cpp
+│   │   └── rrt_star.cpp
 │   ├── visualization/
 │   │   └── visualizer.cpp
 │   └── main.cpp
 └── examples/
     ├── grid_search.cpp
-    └── rrt_demo.cpp
+    ├── rrt_demo.cpp
+    └── rrt_star_demo.cpp
 ```
 
 ## Requirements
@@ -93,6 +101,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./motion_planning      # Interactive grid search visualizer
 ./example_grid         # Grid search algorithm comparison
 ./example_rrt          # RRT demo with continuous space
+./example_rrt_star     # RRT* demo with path optimization
 ```
 
 ## Controls
@@ -131,6 +140,15 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 | C | Clear all obstacles |
 | Esc | Quit |
 
+### RRT* (`example_rrt_star`)
+
+Same controls as RRT, plus:
+
+| Key | Action |
+|-----|--------|
+| T | Toggle continue-after-goal mode |
+| Space | Run RRT* |
+
 ## Implemented Algorithms
 
 ### Graph-Based Search (Discrete Grid)
@@ -140,9 +158,9 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 
 ### Sampling-Based Planning (Continuous Space)
 - [x] RRT (Rapidly-exploring Random Tree)
+- [x] RRT* (Optimal RRT with rewiring)
 
 ### Coming Soon
-- [ ] RRT* (Optimal RRT with rewiring)
 - [ ] RRT-Connect (Bidirectional RRT)
 - [ ] PRM (Probabilistic Roadmap)
 - [ ] Theta* (Any-angle planning)
