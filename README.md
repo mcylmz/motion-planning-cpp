@@ -7,6 +7,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/astar.gif" alt="A* pathfinding visualization" width="500">
 </p>
 
+### Theta* (Any-Angle Planning)
+<p align="center">
+  <img src="assets/theta_star_animation.gif" alt="Theta* visualization" width="500">
+</p>
+
 ### RRT (Rapidly-exploring Random Tree)
 <p align="center">
   <img src="assets/rrt_animation.gif" alt="RRT visualization" width="500">
@@ -42,6 +47,7 @@ MotionPlanning/
 │   │   ├── bfs.hpp                # Breadth-First Search
 │   │   ├── dijkstra.hpp           # Dijkstra's algorithm
 │   │   ├── astar.hpp              # A* with heuristics
+│   │   ├── theta_star.hpp         # Theta* (Any-angle planning)
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
 │   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
 │   │   ├── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
@@ -59,6 +65,7 @@ MotionPlanning/
 │   │   ├── bfs.cpp
 │   │   ├── dijkstra.cpp
 │   │   ├── astar.cpp
+│   │   ├── theta_star.cpp
 │   │   ├── rrt.cpp
 │   │   ├── rrt_star.cpp
 │   │   ├── rrt_connect.cpp
@@ -71,7 +78,8 @@ MotionPlanning/
     ├── rrt_demo.cpp
     ├── rrt_star_demo.cpp
     ├── rrt_connect_demo.cpp
-    └── prm_demo.cpp
+    ├── prm_demo.cpp
+    └── theta_star_demo.cpp
 ```
 
 ## Requirements
@@ -120,6 +128,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./example_rrt_star     # RRT* demo with path optimization
 ./example_rrt_connect  # RRT-Connect demo with bidirectional trees
 ./example_prm          # PRM demo with probabilistic roadmap
+./example_theta_star   # Theta* any-angle planning demo
 ```
 
 ## Controls
@@ -182,12 +191,21 @@ Same controls as RRT, plus:
 | +/- | Adjust sample count (in normal mode) |
 | Space | Build roadmap and find path |
 
+### Theta* (`example_theta_star`)
+
+| Key | Action |
+|-----|--------|
+| Space | Run Theta* search |
+| R | Reset visualization |
+| Esc | Quit |
+
 ## Implemented Algorithms
 
 ### Graph-Based Search (Discrete Grid)
 - [x] BFS (Breadth-First Search)
 - [x] Dijkstra's Algorithm
 - [x] A* with multiple heuristics (Manhattan, Euclidean, Chebyshev, Octile)
+- [x] Theta* (Any-angle planning with line-of-sight shortcuts)
 
 ### Sampling-Based Planning (Continuous Space)
 - [x] RRT (Rapidly-exploring Random Tree)
@@ -196,5 +214,4 @@ Same controls as RRT, plus:
 - [x] PRM (Probabilistic Roadmap)
 
 ### Coming Soon
-- [ ] Theta* (Any-angle planning)
 - [ ] D* Lite (Dynamic replanning)

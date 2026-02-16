@@ -10,18 +10,27 @@ The project follows a layered architecture with four distinct layers: Applicatio
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              APPLICATION LAYER                                  │
 │                                                                                 │
-│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐  │
-│  │   main.cpp      │  │ grid_search.cpp│  │ rrt_demo.cpp   │  │rrt_star_demo.cpp│  │
-│  │ (Grid Search)   │  │ (Algo Bench)   │  │ (RRT GUI)      │  │ (RRT* GUI)      │  │
-│  │                 │  │                │  │                │  │                 │  │
-│  │ • Mode switch   │  │ • Run all algos│  │ • Mode switch  │  │ • Mode switch   │  │
-│  │ • Obstacle draw │  │ • Compare stats│  │ • Obstacle draw│  │ • Obstacle draw │  │
-│  │ • Algo select   │  │ • Print table  │  │ • Tree animate │  │ • Tree animate  │  │
-│  └───────┬─────────┘  └───────┬────────┘  └───────┬────────┘  │ • Toggle cont.  │  │
-│          │                    │                    │           └────────┬────────┘  │
-└──────────┼────────────────────┼────────────────────┼───────────────────┼───────────┘
-           │                    │                    │                   │
-           ▼                    ▼                    ▼                   ▼
+│  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
+│  │   main.cpp      │  │ grid_search.cpp│  │theta_star_demo  │  │ rrt_demo.cpp    │  │
+│  │ (Grid Search)   │  │ (Algo Bench)   │  │ (Theta* GUI)    │  │ (RRT GUI)       │  │
+│  │                 │  │                │  │                 │  │                 │  │
+│  │ • Mode switch   │  │ • Run all algos│  │ • A* vs Theta*  │  │ • Mode switch   │  │
+│  │ • Obstacle draw │  │ • Compare stats│  │ • Any-angle viz │  │ • Obstacle draw │  │
+│  │ • Algo select   │  │ • Print table  │  │ • Line-of-sight │  │ • Tree animate  │  │
+│  └───────┬─────────┘  └───────┬────────┘  └────────┬────────┘  └───────┬─────────┘  │
+│          │                    │                     │                   │            │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐                    │
+│  │rrt_star_demo.cpp│  │rrt_connect_demo  │  │  prm_demo.cpp    │                    │
+│  │ (RRT* GUI)      │  │ (RRT-Connect GUI)│  │  (PRM GUI)       │                    │
+│  │                 │  │                  │  │                  │                    │
+│  │ • Mode switch   │  │ • Mode switch    │  │ • Mode switch    │                    │
+│  │ • Obstacle draw │  │ • Obstacle draw  │  │ • Obstacle draw  │                    │
+│  │ • Tree animate  │  │ • Bidir. trees   │  │ • Roadmap viz    │                    │
+│  │ • Toggle cont.  │  │                  │  │ • Adjust k/N     │                    │
+│  └────────┬────────┘  └────────┬─────────┘  └────────┬─────────┘                    │
+└───────────┼─────────────────────┼─────────────────────┼─────────────────────────────┘
+            │                     │                     │
+            ▼                     ▼                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                             ALGORITHM LAYER                                     │
 │                                                                                 │
@@ -37,24 +46,24 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │   │  │  reconstructPath()          │  │   │  │  getStats()                │  │  │
 │   │  └──────────┬──────────────────┘  │   │  └──────────┬─────────────────┘  │  │
 │   │             │                     │   │             │                    │  │
-│   │    ┌────────┼────────┐            │   │        ┌────┴────┐               │  │
-│   │    ▼        ▼        ▼            │   │        ▼         ▼               │  │
-│   │ ┌──────┐┌───────┐┌──────┐        │   │  ┌──────────┐┌──────────┐        │  │
-│   │ │ BFS  ││Dijkst-││  A*  │        │   │  │   RRT    ││  RRT*    │        │  │
-│   │ │      ││ ra    ││      │        │   │  │          ││          │        │  │
-│   │ │queue ││pqueue ││pqueue│        │   │  │• sample  ││• sample  │        │  │
-│   │ │      ││g-cost ││f=g+h │        │   │  │• nearest ││• nearest │        │  │
-│   │ └──────┘└───────┘└──────┘        │   │  │• steer   ││• steer   │        │  │
-│   │                       │          │   │  │• extend  ││• choosePa│        │  │
-│   │              ┌────────┘          │   │  │          ││• rewire  │        │  │
-│   │              ▼                   │   │  │          ││• propagat│        │  │
-│   │    ┌──────────────────┐          │   │  └──────────┘└──────────┘        │  │
-│   │    │    Heuristics    │          │   │                                  │  │
-│   │    │  • manhattan     │          │   │                                  │  │
-│   │    │  • euclidean     │          │   │                                  │  │
-│   │    │  • chebyshev     │          │   │                                  │  │
-│   │    │  • octile        │          │   │                                  │  │
-│   │    └──────────────────┘          │   │                                  │  │
+│   │    ┌────────┼────────┬────────┐    │   │        ┌────┼────┬─────────┐    │  │
+│   │    ▼        ▼        ▼        ▼    │   │        ▼    ▼    ▼         ▼    │  │
+│   │ ┌──────┐┌───────┐┌──────┐┌──────┐ │   │  ┌──────┐┌──────┐┌───────┐┌──┐ │  │
+│   │ │ BFS  ││Dijkst-││  A*  ││Theta*│ │   │  │ RRT  ││ RRT* ││RRT-Con││PRM│ │  │
+│   │ │      ││ ra    ││      ││      │ │   │  │      ││      ││ nect  ││   │ │  │
+│   │ │queue ││pqueue ││pqueue││pqueue│ │   │  │sample││sample││bidir. ││kNN│ │  │
+│   │ │      ││g-cost ││f=g+h ││f=g+h │ │   │  │steer ││rewire││extend ││A* │ │  │
+│   │ └──────┘└───────┘└──────┘│+LOS  │ │   │  └──────┘└──────┘└───────┘└──┘ │  │
+│   │                       │  └──────┘ │   │                                  │  │
+│   │              ┌────────┘           │   │                                  │  │
+│   │              ▼                    │   │                                  │  │
+│   │    ┌──────────────────┐           │   │                                  │  │
+│   │    │    Heuristics    │           │   │                                  │  │
+│   │    │  • manhattan     │           │   │                                  │  │
+│   │    │  • euclidean     │           │   │                                  │  │
+│   │    │  • chebyshev     │           │   │                                  │  │
+│   │    │  • octile        │           │   │                                  │  │
+│   │    └──────────────────┘           │   │                                  │  │
 │   └───────────────────────────────────┘   └──────────────────────────────────┘  │
 └───────────────────────────────┬──────────────────────────┬──────────────────────┘
                                 │                          │
@@ -167,6 +176,59 @@ User presses SPACE
               │ GridPath     │
               │ • cells[]    │
               │ • cost       │
+              │ • found      │
+              └──────────────┘
+```
+
+### Theta* (Any-Angle Planning)
+
+```
+User presses SPACE
+      │
+      ▼
+┌────────────────────┐
+│ keyCallback        │
+│ resets grid viz    │
+└────────┬───────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────┐
+│ thetaStar.search(grid, start, goal, vizCallback)   │
+│                                                    │
+│  cameFrom[start] = start   // parent of start      │
+│                                                    │
+│  while (frontier not empty) {                      │
+│      current = frontier.pop()                      │
+│      vizCallback(current, VISITED)  ──▶ redraws    │
+│                                                    │
+│      if (current == goal) break                    │
+│                                                    │
+│      for (neighbor : grid.getNeighbors8(current))  │
+│                                                    │
+│          parent = cameFrom[current]                │
+│                                                    │
+│          if (lineOfSight(parent, neighbor)) {      │
+│              ┌─ Path 2: any-angle shortcut ─────┐  │
+│              │ g = g(parent) + euclid(parent, n) │  │
+│              │ cameFrom[n] = parent              │  │
+│              └───────────────────────────────────┘  │
+│          } else {                                  │
+│              ┌─ Path 1: standard A* fallback ───┐  │
+│              │ g = g(current) + moveCost(cur, n) │  │
+│              │ cameFrom[n] = current             │  │
+│              └───────────────────────────────────┘  │
+│          }                                         │
+│  }                                                 │
+│                                                    │
+│  return reconstructPath(cameFrom, start, goal)     │
+│  // Uses Euclidean dist (cells may not be adjacent)│
+└────────────────────┬───────────────────────────────┘
+                     │
+                     ▼
+              ┌──────────────┐
+              │ GridPath     │  Path has fewer waypoints
+              │ • cells[]    │  connected by line-of-sight
+              │ • cost       │  (shorter than A*)
               │ • found      │
               └──────────────┘
 ```
