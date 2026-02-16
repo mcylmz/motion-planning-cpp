@@ -12,6 +12,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/theta_star_animation.gif" alt="Theta* visualization" width="500">
 </p>
 
+### D* Lite (Dynamic Replanning)
+<p align="center">
+  <img src="assets/d_star_lite_animation.gif" alt="D* Lite visualization" width="500">
+</p>
+
 ### RRT (Rapidly-exploring Random Tree)
 <p align="center">
   <img src="assets/rrt_animation.gif" alt="RRT visualization" width="500">
@@ -30,11 +35,6 @@ A C++ implementation of motion planning algorithms with SFML visualization.
 ### PRM (Probabilistic Roadmap)
 <p align="center">
   <img src="assets/prm_animation.gif" alt="PRM visualization" width="500">
-</p>
-
-### D* Lite (Dynamic Replanning)
-<p align="center">
-  <img src="assets/d_star_lite_animation.gif" alt="D* Lite visualization" width="500">
 </p>
 
 ## Project Structure
