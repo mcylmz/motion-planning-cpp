@@ -32,6 +32,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/prm_animation.gif" alt="PRM visualization" width="500">
 </p>
 
+### D* Lite (Dynamic Replanning)
+<p align="center">
+  <img src="assets/d_star_lite_animation.gif" alt="D* Lite visualization" width="500">
+</p>
+
 ## Project Structure
 
 ```
@@ -48,6 +53,7 @@ MotionPlanning/
 │   │   ├── dijkstra.hpp           # Dijkstra's algorithm
 │   │   ├── astar.hpp              # A* with heuristics
 │   │   ├── theta_star.hpp         # Theta* (Any-angle planning)
+│   │   ├── d_star_lite.hpp        # D* Lite (Dynamic replanning)
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
 │   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
 │   │   ├── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
@@ -66,6 +72,7 @@ MotionPlanning/
 │   │   ├── dijkstra.cpp
 │   │   ├── astar.cpp
 │   │   ├── theta_star.cpp
+│   │   ├── d_star_lite.cpp
 │   │   ├── rrt.cpp
 │   │   ├── rrt_star.cpp
 │   │   ├── rrt_connect.cpp
@@ -79,7 +86,8 @@ MotionPlanning/
     ├── rrt_star_demo.cpp
     ├── rrt_connect_demo.cpp
     ├── prm_demo.cpp
-    └── theta_star_demo.cpp
+    ├── theta_star_demo.cpp
+    └── d_star_lite_demo.cpp
 ```
 
 ## Requirements
@@ -129,6 +137,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./example_rrt_connect  # RRT-Connect demo with bidirectional trees
 ./example_prm          # PRM demo with probabilistic roadmap
 ./example_theta_star   # Theta* any-angle planning demo
+./example_d_star_lite  # D* Lite dynamic replanning demo
 ```
 
 ## Controls
@@ -199,6 +208,17 @@ Same controls as RRT, plus:
 | R | Reset visualization |
 | Esc | Quit |
 
+### D* Lite (`example_d_star_lite`)
+
+| Key | Action |
+|-----|--------|
+| Space | Start planning / Toggle auto-move |
+| N | Step robot one cell (manual mode) |
+| Left Click | Add obstacle (triggers replan) |
+| Right Click | Remove obstacle (triggers replan) |
+| R | Reset everything |
+| Esc | Quit |
+
 ## Implemented Algorithms
 
 ### Graph-Based Search (Discrete Grid)
@@ -206,6 +226,7 @@ Same controls as RRT, plus:
 - [x] Dijkstra's Algorithm
 - [x] A* with multiple heuristics (Manhattan, Euclidean, Chebyshev, Octile)
 - [x] Theta* (Any-angle planning with line-of-sight shortcuts)
+- [x] D* Lite (Dynamic replanning with incremental search)
 
 ### Sampling-Based Planning (Continuous Space)
 - [x] RRT (Rapidly-exploring Random Tree)
@@ -213,5 +234,3 @@ Same controls as RRT, plus:
 - [x] RRT-Connect (Bidirectional RRT)
 - [x] PRM (Probabilistic Roadmap)
 
-### Coming Soon
-- [ ] D* Lite (Dynamic replanning)

@@ -11,23 +11,23 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │                              APPLICATION LAYER                                  │
 │                                                                                 │
 │  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │   main.cpp      │  │ grid_search.cpp│  │theta_star_demo  │  │ rrt_demo.cpp    │  │
-│  │ (Grid Search)   │  │ (Algo Bench)   │  │ (Theta* GUI)    │  │ (RRT GUI)       │  │
+│  │   main.cpp      │  │ grid_search.cpp│  │theta_star_demo  │  │d_star_lite_demo │  │
+│  │ (Grid Search)   │  │ (Algo Bench)   │  │ (Theta* GUI)    │  │ (D*Lite GUI)    │  │
 │  │                 │  │                │  │                 │  │                 │  │
-│  │ • Mode switch   │  │ • Run all algos│  │ • A* vs Theta*  │  │ • Mode switch   │  │
-│  │ • Obstacle draw │  │ • Compare stats│  │ • Any-angle viz │  │ • Obstacle draw │  │
-│  │ • Algo select   │  │ • Print table  │  │ • Line-of-sight │  │ • Tree animate  │  │
+│  │ • Mode switch   │  │ • Run all algos│  │ • A* vs Theta*  │  │ • Dynamic obst. │  │
+│  │ • Obstacle draw │  │ • Compare stats│  │ • Any-angle viz │  │ • Incremental   │  │
+│  │ • Algo select   │  │ • Print table  │  │ • Line-of-sight │  │ • Robot movement│  │
 │  └───────┬─────────┘  └───────┬────────┘  └────────┬────────┘  └───────┬─────────┘  │
 │          │                    │                     │                   │            │
-│  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐                    │
-│  │rrt_star_demo.cpp│  │rrt_connect_demo  │  │  prm_demo.cpp    │                    │
-│  │ (RRT* GUI)      │  │ (RRT-Connect GUI)│  │  (PRM GUI)       │                    │
-│  │                 │  │                  │  │                  │                    │
-│  │ • Mode switch   │  │ • Mode switch    │  │ • Mode switch    │                    │
-│  │ • Obstacle draw │  │ • Obstacle draw  │  │ • Obstacle draw  │                    │
-│  │ • Tree animate  │  │ • Bidir. trees   │  │ • Roadmap viz    │                    │
-│  │ • Toggle cont.  │  │                  │  │ • Adjust k/N     │                    │
-│  └────────┬────────┘  └────────┬─────────┘  └────────┬─────────┘                    │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
+│  │rrt_star_demo.cpp│  │rrt_connect_demo  │  │  prm_demo.cpp    │  │ rrt_demo.cpp  │  │
+│  │ (RRT* GUI)      │  │ (RRT-Connect GUI)│  │  (PRM GUI)       │  │ (RRT GUI)     │  │
+│  │                 │  │                  │  │                  │  │               │  │
+│  │ • Mode switch   │  │ • Mode switch    │  │ • Mode switch    │  │ • Mode switch │  │
+│  │ • Obstacle draw │  │ • Obstacle draw  │  │ • Obstacle draw  │  │ • Obst. draw  │  │
+│  │ • Tree animate  │  │ • Bidir. trees   │  │ • Roadmap viz    │  │ • Tree animate│  │
+│  │ • Toggle cont.  │  │                  │  │ • Adjust k/N     │  │               │  │
+│  └────────┬────────┘  └────────┬─────────┘  └────────┬─────────┘  └───────┬───────┘  │
 └───────────┼─────────────────────┼─────────────────────┼─────────────────────────────┘
             │                     │                     │
             ▼                     ▼                     ▼
@@ -49,12 +49,12 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │   │    ┌────────┼────────┬────────┐    │   │        ┌────┼────┬─────────┐    │  │
 │   │    ▼        ▼        ▼        ▼    │   │        ▼    ▼    ▼         ▼    │  │
 │   │ ┌──────┐┌───────┐┌──────┐┌──────┐ │   │  ┌──────┐┌──────┐┌───────┐┌──┐ │  │
-│   │ │ BFS  ││Dijkst-││  A*  ││Theta*│ │   │  │ RRT  ││ RRT* ││RRT-Con││PRM│ │  │
-│   │ │      ││ ra    ││      ││      │ │   │  │      ││      ││ nect  ││   │ │  │
-│   │ │queue ││pqueue ││pqueue││pqueue│ │   │  │sample││sample││bidir. ││kNN│ │  │
-│   │ │      ││g-cost ││f=g+h ││f=g+h │ │   │  │steer ││rewire││extend ││A* │ │  │
-│   │ └──────┘└───────┘└──────┘│+LOS  │ │   │  └──────┘└──────┘└───────┘└──┘ │  │
-│   │                       │  └──────┘ │   │                                  │  │
+│   │ │ BFS  ││Dijkst-││  A*  ││Theta*││D*Lite│ │  │ RRT  ││ RRT* ││RRT-Con││PRM│ │  │
+│   │ │      ││ ra    ││      ││      ││      │ │  │      ││      ││ nect  ││   │ │  │
+│   │ │queue ││pqueue ││pqueue││pqueue││pqueue│ │  │sample││sample││bidir. ││kNN│ │  │
+│   │ │      ││g-cost ││f=g+h ││f=g+h ││g+rhs │ │  │steer ││rewire││extend ││A* │ │  │
+│   │ └──────┘└───────┘└──────┘│+LOS  ││increm│ │  └──────┘└──────┘└───────┘└──┘ │  │
+│   │                       │  └──────┘└──────┘ │                                  │  │
 │   │              ┌────────┘           │   │                                  │  │
 │   │              ▼                    │   │                                  │  │
 │   │    ┌──────────────────┐           │   │                                  │  │
@@ -231,6 +231,65 @@ User presses SPACE
               │ • cost       │  (shorter than A*)
               │ • found      │
               └──────────────┘
+```
+
+### D* Lite (Dynamic Replanning)
+
+```
+User presses SPACE
+      │
+      ▼
+┌────────────────────┐
+│ keyCallback        │
+│ initializes D*Lite │
+│ resets grid viz    │
+└────────┬───────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────┐
+│ dstar.initialize(grid, start, goal)                │
+│   rhs(goal) = 0, all others g = rhs = ∞           │
+│   km = 0, insert goal into priority queue          │
+└────────┬───────────────────────────────────────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────┐
+│ dstar.computeShortestPath(vizCallback)             │
+│                                                    │
+│  Backwards search from goal to start:              │
+│  while (queue.top() < key(robot) OR                │
+│         rhs(robot) ≠ g(robot)) {                   │
+│                                                    │
+│      u = queue.pop()                               │
+│      vizCallback(u, VISITED)  ──▶ redraws screen   │
+│                                                    │
+│      if (g(u) > rhs(u)):     // overconsistent     │
+│          g(u) = rhs(u)                             │
+│          updateVertex(predecessors)                │
+│      else:                    // underconsistent    │
+│          g(u) = ∞                                  │
+│          updateVertex(u + predecessors)             │
+│  }                                                 │
+└────────┬───────────────────────────────────────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────┐
+│ Robot Movement Loop (auto-move or manual step)     │
+│                                                    │
+│  robotPos = argmin(cost(robot,n) + g(n))           │
+│           over neighbors n                         │
+│                                                    │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ On obstacle click:                           │  │
+│  │   km += h(lastRobot, robot)                  │  │
+│  │   updateVertex(changed cells + neighbors)    │  │
+│  │   computeShortestPath()  ──▶ incremental!    │  │
+│  │   (only updates affected nodes, not full     │  │
+│  │    re-search like A*)                        │  │
+│  └──────────────────────────────────────────────┘  │
+│                                                    │
+│  Repeat until robot reaches goal                   │
+└────────────────────────────────────────────────────┘
 ```
 
 ### RRT (Sampling-Based)
