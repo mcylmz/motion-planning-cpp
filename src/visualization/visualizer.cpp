@@ -230,6 +230,129 @@ void Visualizer::drawRectangle(const Vec2& position, double width, double height
     window_.draw(rect);
 }
 
+void Visualizer::drawEllipse(const Vec2& center, double semiMajor, double semiMinor,
+                              double rotation, sf::Color color, bool filled) {
+    constexpr int NUM_SEGMENTS = 120;
+    constexpr double PI2 = 2.0 * 3.14159265358979;
+
+    double cosR = std::cos(rotation);
+    double sinR = std::sin(rotation);
+
+    // Compute world-space points on the ellipse perimeter
+    std::vector<Vec2> ellipsePts(NUM_SEGMENTS);
+    for (int i = 0; i < NUM_SEGMENTS; ++i) {
+        double angle = PI2 * i / NUM_SEGMENTS;
+        double ex = semiMajor * std::cos(angle);
+        double ey = semiMinor * std::sin(angle);
+        double rx = cosR * ex - sinR * ey;
+        double ry = sinR * ex + cosR * ey;
+        ellipsePts[i] = Vec2(center.x + rx, center.y + ry);
+    }
+
+    // Compute visible world bounds from screen dimensions
+    Vec2 wMin = screenToWorld(0, 0);
+    Vec2 wMax = screenToWorld(static_cast<int>(config_.windowWidth),
+                              static_cast<int>(config_.windowHeight));
+    double clipLeft   = wMin.x;
+    double clipRight  = wMax.x;
+    double clipTop    = wMin.y;
+    double clipBottom = wMax.y;
+
+    // Sutherland-Hodgman polygon clipping against viewport rectangle
+    // Clip edges: left, right, top, bottom
+    struct ClipEdge {
+        enum Type { LEFT, RIGHT, TOP, BOTTOM } type;
+        double val;
+    };
+    ClipEdge clipEdges[] = {
+        {ClipEdge::LEFT,   clipLeft},
+        {ClipEdge::RIGHT,  clipRight},
+        {ClipEdge::TOP,    clipTop},
+        {ClipEdge::BOTTOM, clipBottom}
+    };
+
+    auto isInside = [](const Vec2& p, const ClipEdge& e) -> bool {
+        switch (e.type) {
+            case ClipEdge::LEFT:   return p.x >= e.val;
+            case ClipEdge::RIGHT:  return p.x <= e.val;
+            case ClipEdge::TOP:    return p.y >= e.val;
+            case ClipEdge::BOTTOM: return p.y <= e.val;
+        }
+        return false;
+    };
+
+    auto intersect = [](const Vec2& a, const Vec2& b, const ClipEdge& e) -> Vec2 {
+        double dx = b.x - a.x;
+        double dy = b.y - a.y;
+        double t = 0.0;
+        switch (e.type) {
+            case ClipEdge::LEFT:
+            case ClipEdge::RIGHT:
+                t = (dx != 0.0) ? (e.val - a.x) / dx : 0.0;
+                break;
+            case ClipEdge::TOP:
+            case ClipEdge::BOTTOM:
+                t = (dy != 0.0) ? (e.val - a.y) / dy : 0.0;
+                break;
+        }
+        return Vec2(a.x + t * dx, a.y + t * dy);
+    };
+
+    std::vector<Vec2> clipped = ellipsePts;
+    for (const auto& edge : clipEdges) {
+        if (clipped.empty()) break;
+        std::vector<Vec2> input = clipped;
+        clipped.clear();
+        int n = static_cast<int>(input.size());
+        for (int i = 0; i < n; ++i) {
+            const Vec2& cur = input[i];
+            const Vec2& prev = input[(i + n - 1) % n];
+            bool curIn = isInside(cur, edge);
+            bool prevIn = isInside(prev, edge);
+            if (curIn) {
+                if (!prevIn) clipped.push_back(intersect(prev, cur, edge));
+                clipped.push_back(cur);
+            } else if (prevIn) {
+                clipped.push_back(intersect(prev, cur, edge));
+            }
+        }
+    }
+
+    if (clipped.size() < 3) return;
+
+    if (filled) {
+        sf::ConvexShape shape(clipped.size());
+        for (size_t i = 0; i < clipped.size(); ++i) {
+            shape.setPoint(i, worldToScreen(clipped[i]));
+        }
+        shape.setFillColor(color);
+        window_.draw(shape);
+    } else {
+        // Draw outline — only the original ellipse arcs (not viewport boundary edges)
+        // Mark which clipped vertices came from the original ellipse vs clip intersections
+        for (size_t i = 0; i < clipped.size(); ++i) {
+            size_t next = (i + 1) % clipped.size();
+            const Vec2& a = clipped[i];
+            const Vec2& b = clipped[next];
+            // Skip edges that lie on the viewport boundary (both endpoints on same boundary)
+            bool aOnLeft   = std::abs(a.x - clipLeft)   < 0.5;
+            bool aOnRight  = std::abs(a.x - clipRight)  < 0.5;
+            bool aOnTop    = std::abs(a.y - clipTop)     < 0.5;
+            bool aOnBottom = std::abs(a.y - clipBottom)  < 0.5;
+            bool bOnLeft   = std::abs(b.x - clipLeft)   < 0.5;
+            bool bOnRight  = std::abs(b.x - clipRight)  < 0.5;
+            bool bOnTop    = std::abs(b.y - clipTop)     < 0.5;
+            bool bOnBottom = std::abs(b.y - clipBottom)  < 0.5;
+
+            bool bothOnBoundary = (aOnLeft && bOnLeft) || (aOnRight && bOnRight) ||
+                                  (aOnTop && bOnTop) || (aOnBottom && bOnBottom);
+            if (!bothOnBoundary) {
+                drawLine(a, b, color, 3.0f);
+            }
+        }
+    }
+}
+
 void Visualizer::drawText(const std::string& text, const Vec2& position, unsigned int size, sf::Color color) {
     if (!fontLoaded_) return;
 

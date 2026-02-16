@@ -49,6 +49,8 @@ public:
     void drawPoint(const Vec2& point, sf::Color color = colors::TREE_NODE, float radius = 3.0f);
     void drawCircle(const Vec2& center, double radius, sf::Color color, bool filled = false);
     void drawRectangle(const Vec2& position, double width, double height, sf::Color color, bool filled = true);
+    void drawEllipse(const Vec2& center, double semiMajor, double semiMinor,
+                     double rotation, sf::Color color, bool filled = false);
 
     // Text rendering
     void drawText(const std::string& text, const Vec2& position, unsigned int size = 14, sf::Color color = colors::TEXT);

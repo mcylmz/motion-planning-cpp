@@ -60,6 +60,9 @@ target_link_libraries(example_theta_star motion_planning_core motion_planning_al
 add_executable(example_d_star_lite examples/d_star_lite_demo.cpp)
 target_link_libraries(example_d_star_lite motion_planning_core motion_planning_algorithms motion_planning_viz)
 
+add_executable(example_informed_rrt_star examples/informed_rrt_star_demo.cpp)
+target_link_libraries(example_informed_rrt_star motion_planning_core motion_planning_algorithms motion_planning_viz)
+
 # Copy assets if they exist
 if(EXISTS "${PROJECT_SOURCE_DIR}/assets")
     file(COPY ${PROJECT_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})

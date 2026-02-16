@@ -30,6 +30,8 @@ const sf::Color RRT_NEW     = sf::Color(76, 175, 80);       // Green
 const sf::Color REWIRE      = sf::Color(255, 193, 7);       // Amber
 const sf::Color TREE_B      = sf::Color(239, 154, 154);     // Light coral (goal tree)
 const sf::Color ROADMAP_EDGE = sf::Color(144, 164, 174);    // Blue-grey (PRM roadmap)
+const sf::Color ELLIPSE_FILL    = sf::Color(255, 152, 0, 40);   // Semi-transparent orange fill
+const sf::Color ELLIPSE_OUTLINE = sf::Color(255, 152, 0, 255);  // Solid orange outline
 
 }  // namespace colors
 }  // namespace motion_planning

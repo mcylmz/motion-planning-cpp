@@ -27,6 +27,11 @@ A C++ implementation of motion planning algorithms with SFML visualization.
   <img src="assets/rrt_star_animation.gif" alt="RRT* visualization" width="500">
 </p>
 
+### Informed RRT* (Focused Ellipsoidal Sampling)
+<p align="center">
+  <img src="assets/informed_rrt_star_animation.gif" alt="Informed RRT* visualization" width="500">
+</p>
+
 ### RRT-Connect (Bidirectional RRT)
 <p align="center">
   <img src="assets/rrt_connect_animation.gif" alt="RRT-Connect visualization" width="500">
@@ -57,6 +62,7 @@ MotionPlanning/
 │   │   ├── sampling_algorithm.hpp # Base class for sampling-based planners
 │   │   ├── rrt.hpp                # Rapidly-exploring Random Tree
 │   │   ├── rrt_star.hpp           # RRT* (Optimal RRT with rewiring)
+│   │   ├── informed_rrt_star.hpp  # Informed RRT* (Ellipsoidal sampling)
 │   │   ├── rrt_connect.hpp        # RRT-Connect (Bidirectional RRT)
 │   │   └── prm.hpp                # PRM (Probabilistic Roadmap)
 │   └── visualization/
@@ -75,6 +81,7 @@ MotionPlanning/
 │   │   ├── d_star_lite.cpp
 │   │   ├── rrt.cpp
 │   │   ├── rrt_star.cpp
+│   │   ├── informed_rrt_star.cpp
 │   │   ├── rrt_connect.cpp
 │   │   └── prm.cpp
 │   ├── visualization/
@@ -84,6 +91,7 @@ MotionPlanning/
     ├── grid_search.cpp
     ├── rrt_demo.cpp
     ├── rrt_star_demo.cpp
+    ├── informed_rrt_star_demo.cpp
     ├── rrt_connect_demo.cpp
     ├── prm_demo.cpp
     ├── theta_star_demo.cpp
@@ -134,6 +142,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=[vcpkg-root]/scripts/buildsystems/vcpkg.cmake ..
 ./example_grid         # Grid search algorithm comparison
 ./example_rrt          # RRT demo with continuous space
 ./example_rrt_star     # RRT* demo with path optimization
+./example_informed_rrt_star  # Informed RRT* with ellipsoidal sampling
 ./example_rrt_connect  # RRT-Connect demo with bidirectional trees
 ./example_prm          # PRM demo with probabilistic roadmap
 ./example_theta_star   # Theta* any-angle planning demo
@@ -185,6 +194,15 @@ Same controls as RRT, plus:
 | T | Toggle continue-after-goal mode |
 | Space | Run RRT* |
 
+### Informed RRT* (`example_informed_rrt_star`)
+
+Same controls as RRT*, plus ellipse visualization that shrinks as the path cost improves.
+
+| Key | Action |
+|-----|--------|
+| T | Toggle continue-after-goal mode |
+| Space | Run Informed RRT* |
+
 ### RRT-Connect (`example_rrt_connect`)
 
 Same controls as RRT.
@@ -231,6 +249,7 @@ Same controls as RRT, plus:
 ### Sampling-Based Planning (Continuous Space)
 - [x] RRT (Rapidly-exploring Random Tree)
 - [x] RRT* (Optimal RRT with rewiring)
+- [x] Informed RRT* (Ellipsoidal informed sampling for faster convergence)
 - [x] RRT-Connect (Bidirectional RRT)
 - [x] PRM (Probabilistic Roadmap)
 

@@ -20,8 +20,8 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │  └───────┬─────────┘  └───────┬────────┘  └────────┬────────┘  └───────┬─────────┘  │
 │          │                    │                     │                   │            │
 │  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
-│  │rrt_star_demo.cpp│  │rrt_connect_demo  │  │  prm_demo.cpp    │  │ rrt_demo.cpp  │  │
-│  │ (RRT* GUI)      │  │ (RRT-Connect GUI)│  │  (PRM GUI)       │  │ (RRT GUI)     │  │
+│  │rrt_star_demo.cpp│  │informed_rrt_star │  │rrt_connect_demo  │  │  prm_demo.cpp    │  │ rrt_demo.cpp  │  │
+│  │ (RRT* GUI)      │  │(Inf.RRT* GUI)    │  │ (RRT-Connect GUI)│  │  (PRM GUI)       │  │ (RRT GUI)     │  │
 │  │                 │  │                  │  │                  │  │               │  │
 │  │ • Mode switch   │  │ • Mode switch    │  │ • Mode switch    │  │ • Mode switch │  │
 │  │ • Obstacle draw │  │ • Obstacle draw  │  │ • Obstacle draw  │  │ • Obst. draw  │  │
@@ -49,10 +49,10 @@ The project follows a layered architecture with four distinct layers: Applicatio
 │   │    ┌────────┼────────┬────────┐    │   │        ┌────┼────┬─────────┐    │  │
 │   │    ▼        ▼        ▼        ▼    │   │        ▼    ▼    ▼         ▼    │  │
 │   │ ┌──────┐┌───────┐┌──────┐┌──────┐ │   │  ┌──────┐┌──────┐┌───────┐┌──┐ │  │
-│   │ │ BFS  ││Dijkst-││  A*  ││Theta*││D*Lite│ │  │ RRT  ││ RRT* ││RRT-Con││PRM│ │  │
-│   │ │      ││ ra    ││      ││      ││      │ │  │      ││      ││ nect  ││   │ │  │
-│   │ │queue ││pqueue ││pqueue││pqueue││pqueue│ │  │sample││sample││bidir. ││kNN│ │  │
-│   │ │      ││g-cost ││f=g+h ││f=g+h ││g+rhs │ │  │steer ││rewire││extend ││A* │ │  │
+│   │ │ BFS  ││Dijkst-││  A*  ││Theta*││D*Lite│ │  │ RRT  ││ RRT* ││Informed││RRT-Con││PRM│ │  │
+│   │ │      ││ ra    ││      ││      ││      │ │  │      ││      ││ RRT*   ││ nect  ││   │ │  │
+│   │ │queue ││pqueue ││pqueue││pqueue││pqueue│ │  │sample││sample││ellipse ││bidir. ││kNN│ │  │
+│   │ │      ││g-cost ││f=g+h ││f=g+h ││g+rhs │ │  │steer ││rewire││sample  ││extend ││A* │ │  │
 │   │ └──────┘└───────┘└──────┘│+LOS  ││increm│ │  └──────┘└──────┘└───────┘└──┘ │  │
 │   │                       │  └──────┘└──────┘ │                                  │  │
 │   │              ┌────────┘           │   │                                  │  │
@@ -397,6 +397,56 @@ User presses SPACE
               └──────────────┘
 ```
 
+
+### Informed RRT* (Ellipsoidal Sampling)
+
+```
+User presses SPACE
+      │
+      ▼
+┌────────────────────┐
+│ keyCallback        │
+│ sets seed          │
+│ clears prev tree   │
+└────────┬───────────┘
+         │
+         ▼
+┌────────────────────────────────────────────────────────┐
+│ informedRRTStar.plan(env, start, goal, vizCallback)    │
+│                                                        │
+│  tree = {start}, cost[start] = 0                       │
+│  cmin = distance(start, goal)                          │
+│  ellipse.active = false                                │
+│                                                        │
+│  for (i = 0; i < maxIterations; i++) {                 │
+│                                                        │
+│      ┌─── INFORMED SAMPLING (new vs RRT*) ──────────┐ │
+│      │ if (no solution yet):                         │ │
+│      │     sample = uniform from workspace           │ │
+│      │ else:                                         │ │
+│      │     sample = uniform from ellipse(start,      │ │
+│      │              goal, cbest)                     │ │
+│      │     (ellipse shrinks as cbest improves)       │ │
+│      └───────────────────────────────────────────────┘ │
+│                                                        │
+│      nearest, steer, collision check (same as RRT*)    │
+│      choose parent, add node, rewire (same as RRT*)    │
+│                                                        │
+│      if (newPoint near goal && improves bestCost)      │
+│          update bestCost, updateEllipse()              │
+│          ellipse.majorAxis = cbest / 2                 │
+│          ellipse.minorAxis = sqrt(cbest²-cmin²) / 2   │
+│  }                                                     │
+└────────────────────┬───────────────────────────────────┘
+                     │
+                     ▼
+              ┌──────────────┐
+              │ Path         │
+              │ • points[]   │  Converges faster than RRT*
+              │ • totalLength│  by focusing samples in ellipse
+              │ • found      │
+              └──────────────┘
+```
 ## Design Patterns
 
 | Pattern | Where | Purpose |
